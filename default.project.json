@@ -1,0 +1,6 @@
+{
+    "name": "bson.luau",
+    "tree": {
+        "$path": "lib"
+    }
+}
