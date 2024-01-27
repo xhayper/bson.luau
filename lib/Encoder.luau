@@ -78,6 +78,17 @@ function Encoder.__encodeDocument(data: { [string]: unknown }): BufferStream.Buf
 			result:writei32(buffer.len(v))
 			result:writebytes("\x80")
 			result:writebytes(v)
+        else
+            local d = tostring(v)
+            local length = utf8.len(d)
+
+			if not length then
+				error(`bad argument #1 to '__encodeDocument' (utf8 string expected, got {typeof(v)})`)
+			end
+
+			result:writebytes("\x02")
+			encode_e_name(k)
+			Encoder.__encodeString(result, d)
 		end
 	end
 
