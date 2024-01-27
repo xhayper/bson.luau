@@ -35,8 +35,6 @@ function Decoder.__readDocument(data: buffer): { [string]: unknown }
 			error("Can't find null terminator!")
 		end
 
-		print(string.byte(stream:tostring(), 1, -1))
-
 		local dataType = stream:readbytes(1):tostring()
 
 		local key = Decoder.__readCString(stream)
