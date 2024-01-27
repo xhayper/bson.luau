@@ -26,9 +26,16 @@ function Decoder.__readDocument(data: buffer): { [string]: unknown }
 	local size = stream:readi32()
 
 	repeat
+		if stream:readbytes(1):tostring() == "\x00" and stream.byteOffset == size then
+			break
+		end
+		stream.byteOffset -= 1
+
 		if stream.byteOffset >= size then
 			error("Can't find null terminator!")
 		end
+
+		print(string.byte(stream:tostring(), 1, -1))
 
 		local dataType = stream:readbytes(1):tostring()
 

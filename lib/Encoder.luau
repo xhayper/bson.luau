@@ -72,6 +72,12 @@ function Encoder.__encodeDocument(data: { [string]: unknown }): BufferStream.Buf
 			result:writebytes("\x09")
 			encode_e_name(k)
 			result:writef64(v.UnixTimestampMillis)
+		elseif typeof(v) == "buffer" then
+			result:writebytes("\x05")
+			encode_e_name(k)
+			result:writei32(buffer.len(v))
+			result:writebytes("\x80")
+			result:writebytes(v)
 		end
 	end
 
