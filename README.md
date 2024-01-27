@@ -5,7 +5,7 @@ Luau implementation of BSON data format
 # Usage
 
 ```lua
-local bson = require(script.Parent)
+local bson = require("path/to/bson")
 
 local Encoder = bson.Encoder
 local Decoder = bson.Decoder
