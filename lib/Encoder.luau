@@ -76,7 +76,7 @@ function Encoder.__encodeDocument(data: { [string]: unknown }): BufferStream.Buf
 			result:writebytes("\x05")
 			encode_e_name(k)
 			result:writei32(buffer.len(v))
-			result:writebytes("\x80")
+			result:writebytes("\x00")
 			result:writebytes(v)
 		else
 			local d = tostring(v)
