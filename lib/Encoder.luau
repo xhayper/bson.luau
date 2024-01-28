@@ -13,6 +13,22 @@ function Encoder.encode(data: unknown): buffer
 	return Encoder.__encodeDocument(data :: any).buffer
 end
 
+local function int64_to_le_bytes(data: number)
+	local low = data % 2 ^ 32
+	local high = (data - low) / 2 ^ 32
+
+	return string.char(
+		low % 256,
+		math.floor(low / 256) % 256,
+		math.floor(low / 65536) % 256,
+		math.floor(low / 16777216) % 256,
+		high % 256,
+		math.floor(high / 256) % 256,
+		math.floor(high / 65536) % 256,
+		math.floor(high / 16777216) % 256
+	)
+end
+
 function Encoder.__encodeDocument(data: { [string]: unknown }): BufferStream.BufferStream
 	local result = BufferStream.new()
 	result:writei32(0)
@@ -24,10 +40,10 @@ function Encoder.__encodeDocument(data: { [string]: unknown }): BufferStream.Buf
 	for k, v in data do
 		if typeof(v) == "number" then
 			if v % 1 == 0 then
-				if v > 2_147_483_647 then
+				if v > 2_147_483_647 or -2_147_483_648 > v then
 					result:writebytes("\x12")
 					encode_e_name(k)
-					result:writef64(v)
+					result:writebytes(int64_to_le_bytes(v))
 				else
 					result:writebytes("\x10")
 					encode_e_name(k)

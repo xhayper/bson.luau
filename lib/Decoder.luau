@@ -19,6 +19,14 @@ function Decoder.decode<T>(data: buffer | string): T
 	return (Decoder.__readDocument(buf) :: any) :: T
 end
 
+local function le_bytes_to_int64(bytes: string): number
+	local b1, b2, b3, b4, b5, b6, b7, b8 = string.byte(bytes, 1, 8)
+
+	local n = b1 + b2 * 2 ^ 8 + b3 * 2 ^ 16 + b4 * 2 ^ 24 + b5 * 2 ^ 32 + b6 * 2 ^ 40 + b7 * 2 ^ 48 + b8 * 2 ^ 56
+
+	return n
+end
+
 function Decoder.__readDocument(data: buffer): { [string]: unknown }
 	local result = {}
 
@@ -44,7 +52,7 @@ function Decoder.__readDocument(data: buffer): { [string]: unknown }
 
 		-- double, int64
 		if dataType == "\x01" or dataType == "\x12" then
-			resultData = stream:readf64()
+			resultData = le_bytes_to_int64(stream:readbytes(8):tostring())
 			-- string, JS Code, Symbol (Deprecated)
 		elseif dataType == "\x02" or dataType == "\x0D" or dataType == "\x0E" then
 			local len = stream:readi32()
